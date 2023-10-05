@@ -36,4 +36,4 @@ services:
         networks:
             - polyfiller
         restart: always
-        command: caddy reverse-proxy --from polyfiller.app --to api-service:3000
+        command: caddy reverse-proxy --from polyfiller.kaiyuanshe.cn --to api-service:3000
