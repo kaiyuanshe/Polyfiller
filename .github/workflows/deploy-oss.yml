@@ -58,6 +58,7 @@ jobs:
                   password: ${{ secrets.SSH_KEY }}
                   command: |
                       cd /tmp/${{ env.BOX_NAME }}
+                      mkdir -p ~/${{ env.BOX_NAME }}
                       mv docker-compose.yml .env start-docker.sh ~/${{ env.BOX_NAME }}
                       cd ~/${{ env.BOX_NAME }}
                       chmod +x ./start-docker.sh
