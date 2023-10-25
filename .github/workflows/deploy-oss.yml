@@ -62,4 +62,4 @@ jobs:
                       mv docker-compose.yml .env start-docker.sh ~/${{ env.BOX_NAME }}
                       cd ~/${{ env.BOX_NAME }}
                       chmod +x ./start-docker.sh
-                      echo ${{ secrets.SSH_KEY }} | sudo -S ./start-docker.sh ${{ env.ARTIFACT_PATH }}
+                      echo ${{ secrets.SSH_KEY }} | sudo -S ./start-docker.sh /tmp/${{ env.BOX_NAME }}/${{ env.ARTIFACT_PATH }}
