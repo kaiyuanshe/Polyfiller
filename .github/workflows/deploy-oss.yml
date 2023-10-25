@@ -8,7 +8,7 @@ on:
         tags:
             - v*
 env:
-    ARTIFACT_PATH: /tmp/artifact.tar
+    ARTIFACT_PATH: artifact.tar
     BOX_NAME: api-service
     BOX_URL: polyfiller/api-service
 
@@ -45,7 +45,7 @@ jobs:
               uses: garygrossgarten/github-action-scp@release
               with:
                   local: ./build
-                  remote: /tmp
+                  remote: /tmp/${{ env.BOX_NAME }}
                   host: ${{ secrets.HOST }}
                   username: ${{ secrets.USER }}
                   password: ${{ secrets.SSH_KEY }}
@@ -57,8 +57,8 @@ jobs:
                   username: ${{ secrets.USER }}
                   password: ${{ secrets.SSH_KEY }}
                   command: |
-                      cd /tmp
-                      mv docker-compose.yml .env start-docker.sh ~/
-                      cd ~/
-                      chmod +x ~/start-docker.sh
-                      echo ${{ secrets.SSH_KEY }} | sudo -S ~/start-docker.sh ${{ env.ARTIFACT_PATH }}
+                      cd /tmp/${{ env.BOX_NAME }}
+                      mv docker-compose.yml .env start-docker.sh ~/${{ env.BOX_NAME }}
+                      cd ~/${{ env.BOX_NAME }}
+                      chmod +x ./start-docker.sh
+                      echo ${{ secrets.SSH_KEY }} | sudo -S ./start-docker.sh ${{ env.ARTIFACT_PATH }}
