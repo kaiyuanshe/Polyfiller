@@ -1,11 +1,11 @@
 version: "3"
 
 volumes:
-  polyfill-buffer:
+  polyfill-store:
     driver: juicedata/juicefs
     driver_opts:
-      name: polyfill-buffer
-      metaurl: sqlite3://polyfill-buffer.db
+      name: polyfill-store
+      metaurl: sqlite3://polyfill-store.db
       storage: ${STORAGE_TYPE}
       bucket: ${BUCKET}
       access-key: ${ACCESS_KEY}
@@ -19,7 +19,7 @@ services:
     ports:
       - 3001:3000
     volumes:
-      - polyfill-buffer:/tmp/@wessberg/polyfiller
+      - polyfill-store:/tmp/@wessberg/polyfiller
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 1"]
       interval: 3s
@@ -32,9 +32,3 @@ services:
       driver: json-file
       options:
         max-size: 10m
-
-  autoheal:
-    image: willfarrell/autoheal:1.2.0
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
