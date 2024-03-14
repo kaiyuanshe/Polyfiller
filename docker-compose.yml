@@ -6,7 +6,7 @@ volumes:
     driver_opts:
       name: polyfill-cache
       # metaurl: sqlite3://polyfill-cache.db
-      metaurl: postgres://postgres:${ADMIN_JWT_SECRET}@postgres-server:5432/juicefs
+      metaurl: postgres://postgres:${META DATA_PASSWORD}@meta-server:5432/juicefs
       storage: ${STORAGE_TYPE}
       bucket: ${BUCKET}
       access-key: ${ACCESS_KEY}
@@ -18,7 +18,7 @@ networks:
 services:
   api-service:
     depends_on:
-      - postgres-server
+      - meta-server
     image: polyfiller/api-service
     environment:
       - NODE_ENV=production
@@ -41,10 +41,10 @@ services:
       options:
         max-size: 10m
   
-  postgres-server:
-    image: postgres:14.11
+  meta-server:
+    image: postgres
     environment:
-      - POSTGRES_PASSWORD=${ADMIN_JWT_SECRET}
+      - POSTGRES_PASSWORD=${META DATA_PASSWORD}
     volumes:
       - polyfill-cache:/var/lib/postgresql/data/
     networks:
