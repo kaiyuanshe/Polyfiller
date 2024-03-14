@@ -5,7 +5,6 @@ volumes:
     driver: juicedata/juicefs
     driver_opts:
       name: polyfill-cache
-      # metaurl: sqlite3://polyfill-cache.db
       metaurl: postgres://postgres:${METADATA_PASSWORD}@meta-server:5432/juicefs
       storage: ${STORAGE_TYPE}
       bucket: ${BUCKET}
