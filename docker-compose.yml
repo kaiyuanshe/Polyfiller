@@ -42,6 +42,7 @@ services:
   
   meta-server:
     image: postgres
+    user: postgres
     environment:
       - POSTGRES_PASSWORD=${METADATA_PASSWORD}
     volumes:
@@ -49,7 +50,7 @@ services:
     networks:
       - polyfiller
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready  -U postgres" ]
       interval: 3s
       retries: 5
     labels:
