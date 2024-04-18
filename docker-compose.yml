@@ -1,30 +1,54 @@
 version: "3"
-
-volumes:
-  polyfill-cache:
-    driver: juicedata/juicefs
-    driver_opts:
-      name: polyfill-cache
-      metaurl: postgres://postgres:${METADATA_PASSWORD}@meta-server:5432/juicefs
-      storage: ${STORAGE_TYPE}
-      bucket: ${BUCKET}
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
-
 networks:
   polyfiller:
 
 services:
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+  myjfs_format:
+    image: juicedata/mount:latest
+    command: juicefs format --storage wasb --bucket   ${BUCKET} --access-key=${ACCESS_KEY}  --secret-key=${SECRET_KEY}   redis://meta-server myjfs
+    devices:
+      - /dev/fuse
+    networks:
+      - polyfiller
+
+  myjfs:
+    image: juicedata/mount:latest
+    privileged: true
+    command: juicefs mount redis://meta-server myjfs /mnt
+    volumes:
+      - /mnt
+    networks:
+      - polyfiller
+    
+
+  meta-server:
+    depends_on:
+      - autoheal
+    image: redislabs/redismod
+    ports:
+      - "6379:6379"
+    networks:
+      - polyfiller
+
+    labels:
+      - autoheal=true
+    restart: always
+
   api-service:
     depends_on:
+      - autoheal
       - meta-server
     image: polyfiller/api-service
     environment:
       - NODE_ENV=production
-    ports:
-      - 3000:3000
     volumes:
-      - polyfill-cache:/tmp/@wessberg/polyfiller
+      - /mnt:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
@@ -39,29 +63,6 @@ services:
       driver: json-file
       options:
         max-size: 10m
-  
-  meta-server:
-    image: postgres
-    user: postgres
-    environment:
-      - POSTGRES_PASSWORD=${METADATA_PASSWORD}
-    volumes:
-      - ./data:/var/lib/postgresql/data/
-    networks:
-      - polyfiller
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready  -U postgres" ]
-      interval: 3s
-      retries: 5
-    labels:
-      - autoheal=true
-    restart: always
-
-  autoheal:
-    image: willfarrell/autoheal:1.2.0
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
 
   caddy:
     depends_on:
