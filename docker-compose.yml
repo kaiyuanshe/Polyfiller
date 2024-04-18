@@ -63,15 +63,3 @@ services:
       driver: json-file
       options:
         max-size: 10m
-
-  caddy:
-    depends_on:
-      - api-service
-    image: caddy
-    ports:
-      - 80:80
-      - 443:443
-    networks:
-      - polyfiller
-    restart: always
-    command: caddy reverse-proxy --from polyfiller.app --to api-service:3000
