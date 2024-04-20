@@ -9,9 +9,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
 
-  myjfs_format:
+  myjfs-format:
     image: juicedata/mount:latest
-    command: juicefs format --storage wasb --bucket   ${BUCKET} --access-key=${ACCESS_KEY}  --secret-key=${SECRET_KEY}   redis://meta-server myjfs
+    depends_on:
+      - meta-server
+    command: juicefs format --storage wasb --bucket   ${BUCKET} --access-key=${ACCESS_KEY}  --secret-key=${SECRET_KEY}    postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  myjfs
     devices:
       - /dev/fuse
     networks:
@@ -19,26 +21,33 @@ services:
 
   myjfs:
     image: juicedata/mount:latest
+    depends_on:
+      - meta-server
+      - myjfs-format
     privileged: true
-    command: juicefs mount redis://meta-server myjfs /mnt
+    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  myjfs /mnt
     volumes:
       - /mnt
     networks:
       - polyfiller
-    
 
   meta-server:
-    depends_on:
-      - autoheal
-    image: redislabs/redismod
-    ports:
-      - "6379:6379"
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${SECRET_KEY}
+    volumes:
+      - ./data:/var/lib/postgresql/data/
     networks:
       - polyfiller
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      retries: 5
     labels:
       - autoheal=true
     restart: always
+
 
   api-service:
     depends_on:
