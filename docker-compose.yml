@@ -8,7 +8,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
-
+    
   myjfs-format:
     image: juicedata/mount:latest
     depends_on:
@@ -48,7 +48,6 @@ services:
       - autoheal=true
     restart: always
 
-
   api-service:
     depends_on:
       - autoheal
@@ -72,7 +71,7 @@ services:
       driver: json-file
       options:
         max-size: 10m
-    
+        
   caddy:
     depends_on:
       - api-service
