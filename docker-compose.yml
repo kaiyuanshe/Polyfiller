@@ -25,9 +25,9 @@ services:
       - meta-server
       - myjfs-format
     privileged: true
-    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  myjfs /mnt
+    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  /mnt
     volumes:
-      - /mnt
+      - myjfs-data:/mnt
     networks:
       - polyfiller
 
@@ -56,7 +56,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - /mnt:/tmp/@wessberg/polyfiller
+      -  myjfs-data:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
@@ -83,3 +83,7 @@ services:
       - polyfiller
     restart: always
     command: caddy reverse-proxy --from polyfiller.app --to api-service:3000
+
+volumes:
+  myjfs-data:
+    driver: local
