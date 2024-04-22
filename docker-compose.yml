@@ -25,7 +25,7 @@ services:
       - meta-server
       - myjfs-format
     privileged: true
-    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  /mnt
+    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  /mnt/myjfs
     volumes:
       - myjfs-data:/mnt
     networks:
