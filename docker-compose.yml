@@ -25,9 +25,16 @@ services:
       - meta-server
       - myjfs-format
     privileged: true
-    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  /mnt/myjfs
+    command: juicefs mount   postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres  /mnt
     volumes:
-      - myjfs-data:/mnt
+      - ./mnt:/mnt:rw,rshared
+    cap_add:
+        - SYS_ADMIN
+    devices:
+        - /dev/fuse
+    security_opt: 
+        - apparmor:unconfined
+    restart: unless-stopped
     networks:
       - polyfiller
 
@@ -56,7 +63,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      -  myjfs-data:/tmp/@wessberg/polyfiller
+      - ./mnt:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
