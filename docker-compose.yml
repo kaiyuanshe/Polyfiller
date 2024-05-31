@@ -1,7 +1,4 @@
 version: "3"
-volumes:
-  polyfill-cache:
-    driver: local
 
 networks:
   polyfiller:
@@ -38,7 +35,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - polyfill-cache:/tmp/@wessberg/polyfiller
+      - ./polyfill-cache:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
