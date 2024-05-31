@@ -1,6 +1,6 @@
 version: "3"
 volumes:
-  metadata:
+  polyfill-cache:
     driver: local
 
 networks:
