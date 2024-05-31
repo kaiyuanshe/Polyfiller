@@ -16,6 +16,8 @@ services:
   meta-server:
     image: rclone/rclone:latest
     container_name: rclone_container
+    environment:
+      - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
     cap_add:
       - SYS_ADMIN # Necessary for FUSE
       - MKNOD # Necessary for FUSE
@@ -25,11 +27,9 @@ services:
       - "apparmor:unconfined"
     volumes:
       - ./config/rclone:/config/rclone # Mount the local rclone config directory to the container
-      - ./metadata:/metadata:shared # Mount the local directory for the rclone mount
-    command: "mount azure:/ /metadata --allow-other --allow-non-empty --vfs-cache-mode writes"
+      - ./polyfill-cache:/polyfill-cache:shared # Mount the local directory for the rclone mount
+    command: "mount azure:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
     restart: always
-    environment:
-      - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
 
   api-service:
     depends_on:
@@ -39,7 +39,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - metadata:/tmp/@wessberg/polyfiller
+      - polyfill-cache:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
