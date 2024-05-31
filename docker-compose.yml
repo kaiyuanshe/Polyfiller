@@ -9,15 +9,33 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
 
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone_container
+    cap_add:
+      - SYS_ADMIN # Necessary for FUSE
+      - MKNOD # Necessary for FUSE
+    devices:
+      - "/dev/fuse" # Necessary for FUSE
+    security_opt:
+      - "apparmor:unconfined"
+    volumes:
+      - ./config/rclone:/config/rclone # Mount the local rclone config directory to the container
+      - ./metadata:/metadata:shared # Mount the local directory for the rclone mount
+    command: "mount azure:/ /metadata --allow-other  --allow-non-empty --vfs-cache-mode writes"
+    restart: unless-stopped
+    environment:
+      - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
+
   api-service:
     depends_on:
       - autoheal
-      - meta-server
+      - rclone
     image: polyfiller/api-service
     environment:
       - NODE_ENV=production
     volumes:
-      - ./mnt:/tmp/@wessberg/polyfiller
+      - metadata:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
@@ -46,5 +64,5 @@ services:
     command: caddy reverse-proxy --from polyfiller.app --to api-service:3000
 
 volumes:
-  myjfs-data:
+  metadata:
     driver: local
