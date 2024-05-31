@@ -13,7 +13,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
 
-  rclone:
+  meta-server:
     image: rclone/rclone:latest
     container_name: rclone_container
     cap_add:
@@ -34,7 +34,7 @@ services:
   api-service:
     depends_on:
       - autoheal
-      - rclone
+      - meta-server
     image: polyfiller/api-service
     environment:
       - NODE_ENV=production
