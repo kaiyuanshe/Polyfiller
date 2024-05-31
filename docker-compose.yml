@@ -2,6 +2,10 @@ version: "3"
 networks:
   polyfiller:
 
+volumes:
+  metadata:
+    driver: local
+
 services:
   autoheal:
     image: willfarrell/autoheal:1.2.0
@@ -62,7 +66,3 @@ services:
       - polyfiller
     restart: always
     command: caddy reverse-proxy --from polyfiller.app --to api-service:3000
-
-volumes:
-  metadata:
-    driver: local
