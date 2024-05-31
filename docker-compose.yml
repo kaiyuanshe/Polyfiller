@@ -1,16 +1,5 @@
 version: "3"
 
-volumes:
-  polyfill-cache:
-    driver: juicedata/juicefs
-    driver_opts:
-      name: polyfill-cache
-      metaurl: postgres://postgres:${SECRET_KEY}@meta-server:5432/postgres
-      storage: ${STORAGE_TYPE}
-      bucket: ${BUCKET}
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
-
 networks:
   polyfiller:
 
@@ -22,22 +11,20 @@ services:
     restart: always
 
   meta-server:
-    depends_on:
-      - autoheal
-    image: postgres
-    user: postgres
+    image: rclone/rclone:latest
     environment:
-      - POSTGRES_PASSWORD=${SECRET_KEY}
+      - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
+    cap_add:
+      - SYS_ADMIN # Necessary for FUSE
+      - MKNOD # Necessary for FUSE
+    devices:
+      - "/dev/fuse" # Necessary for FUSE
+    security_opt:
+      - "apparmor:unconfined"
     volumes:
-      - ./data:/var/lib/postgresql/data/
-    networks:
-      - polyfiller
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 3s
-      retries: 5
-    labels:
-      - autoheal=true
+      - ./config/rclone:/config/rclone # Mount the local rclone config directory to the container
+      - ./polyfill-cache:/polyfill-cache:shared # Mount the local directory for the rclone mount
+    command: "mount azure:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
     restart: always
 
   api-service:
@@ -48,7 +35,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - polyfill-cache:/tmp/@wessberg/polyfiller
+      - ./polyfill-cache:/tmp/@wessberg/polyfiller
     networks:
       - polyfiller
     healthcheck:
