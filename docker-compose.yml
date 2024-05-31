@@ -23,7 +23,7 @@ services:
       - ./config/rclone:/config/rclone # Mount the local rclone config directory to the container
       - ./metadata:/metadata:shared # Mount the local directory for the rclone mount
     command: "mount azure:/ /metadata --allow-other  --allow-non-empty --vfs-cache-mode writes"
-    restart: unless-stopped
+    restart: always
     environment:
       - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
 
