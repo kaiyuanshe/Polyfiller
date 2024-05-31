@@ -15,7 +15,6 @@ services:
 
   meta-server:
     image: rclone/rclone:latest
-    container_name: rclone_container
     environment:
       - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
     cap_add:
