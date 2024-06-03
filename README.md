@@ -382,12 +382,44 @@ docker run --name polyfiller -e NODE_ENV=production -p 3000:3000 polyfiller/api-
 
 ##### Composed services with Object Storage
 
-Install Docker plugins in Cloud Server at first:
+Install Docker in Cloud Server at first:
 
+remove old Docker version
 ```shell
-sudo apt install docker-compose
-sudo docker plugin install juicedata/juicefs
+sudo apt remove -y docker docker-engine docker.io containerd runc
 ```
+
+install dependencies
+```shell
+sudo apt install -y ca-certificates curl gnupg lsb-release
+```
+
+download GPG key and believe it
+```shell
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+```
+
+build source for the current CPU architecture and system version
+```shell
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+install Docker-ce  and Docker plugin
+```shell
+sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+```
+
+the current user joins the docker user group
+```shell
+sudo gpasswd -a ${USER} docker
+```
+
+You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system
+
 
 ###### 1. Manual deployment
 
@@ -403,7 +435,7 @@ SECRET_KEY =
 2. Run shown commands in the Project Root folder:
 
 ```shell
-docker-compose up -d
+docker compose up -d
 ```
 
 ###### 2. Automatic deployment
