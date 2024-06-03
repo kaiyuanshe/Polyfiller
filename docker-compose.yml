@@ -10,7 +10,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
 
-  meta-server:
+  polyfill-cache:
     image: rclone/rclone:latest
     environment:
       - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
@@ -30,7 +30,7 @@ services:
   api-service:
     depends_on:
       - autoheal
-      - meta-server
+      - polyfill-cache
     image: polyfiller/api-service
     environment:
       - NODE_ENV=production
