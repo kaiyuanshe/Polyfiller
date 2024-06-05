@@ -415,7 +415,7 @@ the current user joins the docker user group
 sudo gpasswd -a ${USER} docker
 ```
 
-You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system
+You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system.
 
 Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
 ```shell
