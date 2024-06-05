@@ -417,6 +417,11 @@ sudo gpasswd -a ${USER} docker
 
 You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system
 
+Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
+```shell
+sudo apt install fuse3 -y 
+```  
+
 ##### Simple container
 
 Run shown commands in the Project Root folder:
@@ -428,13 +433,35 @@ docker run --name polyfiller -e NODE_ENV=production -p 3000:3000 polyfiller/api-
 
 ###### 1. Manual deployment
 
-1. Write [JuiceFS object storage variables](https://juicefs.com/docs/community/reference/how_to_set_up_object_storage/) into `.env` file in the Project Root folder:
+1. Write [rclone config](https://rclone.org/install/) into `rclone.conf` file in the Project `config/rclone` folder:
 
 ```ini
-STORAGE_TYPE =
-BUCKET =
-ACCESS_KEY =
-SECRET_KEY =
+[azure]
+type = azureblob
+account = xxxx
+key = xxxx
+endpoint = https://xxx
+```
+
+How to configure quickly? use `rclone config` command ? It need knows about a lot of things. Open [Doc](https://rclone.org/docs/), choose a instructions, like [Dropbox](https://rclone.org/dropbox/).
+
+Look for
+
+```ini
+[remote]
+app_key =
+app_secret =
+token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+It is the configuration for Dropbox.
+
+```ini
+[dropbox]
+type = dropbox
+app_key = xxxxxxxxx
+app_secret = xxxxxxxxx
+token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 2. Run shown commands in the Project Root folder:
