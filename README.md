@@ -117,7 +117,7 @@ Polyfiller is kindly supported by [JetBrains](https://www.jetbrains.com/?from=Po
   - [Hosting](#hosting)
     - [Docker](#docker)
       - [Composed services with Object Storage](#composed-services-with-object-storage)
-        - [remove old Docker version](#remove-old-docker-version)
+        - [Install Docker in Cloud Server at first](#install-docker-in-cloud-server-at-first)
       - [Simple container](#simple-container)
         - [1. Manual deployment](#1-manual-deployment)
         - [2. Automatic deployment](#2-automatic-deployment)
@@ -374,14 +374,22 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 ##### Composed services with Object Storage
 
-If you no use Debain/Ubuntu , see the [Docker Doc](https://docs.docker.com/engine/install/).
+###### Install Docker in Cloud Server at first
+
+use install script
+
+```shell
+curl -fsSL https://get.docker.com | sudo sh
+```
 
 [Docker-install-script](https://github.com/docker/docker-install), it say `It is not recommended to depend on this script for deployment to production systems`.
 **So depend on your choice**.
 
-Install Docker in Cloud Server at first:
+If you no use Debain/Ubuntu , see the [Docker Doc](https://docs.docker.com/engine/install/).
 
-###### remove old Docker version
+Or install by hand.
+
+remove old Docker version
 
 ```shell
 sudo apt remove -y docker docker-engine docker.io containerd runc
@@ -469,6 +477,18 @@ type = dropbox
 app_key = xxxxxxxxx
 app_secret = xxxxxxxxx
 token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+If you use dropbox, in `docker-compose.yml`.
+
+```yaml
+command: "mount azure:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
+```
+
+It should be changed to.
+
+```yml
+command: "mount dropbox:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
 ```
 
 2. Run shown commands in the Project Root folder:
