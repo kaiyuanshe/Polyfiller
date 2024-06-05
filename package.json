@@ -27,7 +27,7 @@
 		"release": "np --no-cleanup --no-yarn --no-tests",
 		"update:check": "npx npm-check-updates -x np --dep dev,prod",
 		"update:commit": "npx npm-check-updates -u -x np,find-up --dep dev,prod && npm update && npm install",
-		"install:config":  "get-git-folder https://github.com/kaiyuanshe/service-configuration main Polyfiller  ||  true"
+		"install":  "get-git-folder https://github.com/kaiyuanshe/service-configuration main Polyfiller  ||  true"
 	},
 	"keywords": [
 		"polyfills",
