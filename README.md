@@ -117,6 +117,7 @@ Polyfiller is kindly supported by [JetBrains](https://www.jetbrains.com/?from=Po
   - [Hosting](#hosting)
     - [Docker](#docker)
       - [Composed services with Object Storage](#composed-services-with-object-storage)
+        - [remove old Docker version](#remove-old-docker-version)
       - [Simple container](#simple-container)
         - [1. Manual deployment](#1-manual-deployment)
         - [2. Automatic deployment](#2-automatic-deployment)
@@ -373,9 +374,14 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 ##### Composed services with Object Storage
 
+If you no use Debain/Ubuntu , see the [Docker Doc](https://docs.docker.com/engine/install/).
+
+[Docker-install-script](https://github.com/docker/docker-install), it say `It is not recommended to depend on this script for deployment to production systems`.
+**So depend on your choice**.
+
 Install Docker in Cloud Server at first:
 
-remove old Docker version
+###### remove old Docker version
 
 ```shell
 sudo apt remove -y docker docker-engine docker.io containerd runc
@@ -418,9 +424,10 @@ sudo gpasswd -a ${USER} docker
 You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system.
 
 Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
+
 ```shell
-sudo apt install fuse3 -y 
-```  
+sudo apt install fuse3 -y
+```
 
 ##### Simple container
 
