@@ -376,51 +376,10 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 ###### Install Docker in Cloud Server at first
 
-use install script
+In the development environment, use install script
 
 ```shell
 curl -fsSL https://get.docker.com | sudo sh
-```
-
-[Docker-install-script](https://github.com/docker/docker-install), it say `It is not recommended to depend on this script for deployment to production systems`.
-**So depend on your choice**.
-
-If you no use Debain/Ubuntu , see the [Docker Doc](https://docs.docker.com/engine/install/).
-
-Or install by hand.
-
-remove old Docker version
-
-```shell
-sudo apt remove -y docker docker-engine docker.io containerd runc
-```
-
-install dependencies
-
-```shell
-sudo apt install -y ca-certificates curl gnupg lsb-release
-```
-
-download GPG key and believe it
-
-```shell
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-```
-
-build source for the current CPU architecture and system version
-
-```shell
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-```
-
-install Docker-ce and Docker plugin
-
-```shell
-sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
 the current user joins the docker user group
@@ -430,6 +389,10 @@ sudo gpasswd -a ${USER} docker
 ```
 
 You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system.
+
+[Docker-install-script](https://github.com/docker/docker-install), it say `It is not recommended to depend on this script for deployment to production systems`.
+**So depend on your choice**.
+More info see the [Docker install Doc](https://docs.docker.com/engine/install/).
 
 Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
 
