@@ -442,13 +442,13 @@ app_secret = xxxxxxxxx
 token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-If you use dropbox, in `docker-compose.yml`.
+If you use Dropbox, in `docker-compose.yml`：
 
 ```yaml
 command: "mount azure:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
 ```
 
-It should be changed to.
+It should be changed to：
 
 ```yml
 command: "mount dropbox:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
