@@ -421,7 +421,7 @@ key = xxxx
 endpoint = https://xxx
 ```
 
-How to configure quickly? use `rclone config` command ? It need knows about a lot of things. Open [Doc](https://rclone.org/docs/), choose a instructions, like [Dropbox](https://rclone.org/dropbox/).
+How to configure quickly? Use `rclone config` command? It needs to know a lot of things. Open [Document](https://rclone.org/docs/), choose an instructions, like [Dropbox](https://rclone.org/dropbox/).
 
 Look for
 
