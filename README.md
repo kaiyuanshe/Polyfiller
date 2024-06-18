@@ -411,7 +411,7 @@ docker run --name polyfiller -e NODE_ENV=production -p 3000:3000 polyfiller/api-
 
 ###### 1. Rclone config
 
-1. Write [rclone config](https://rclone.org/install/) into `rclone.conf` file in the Project `config/rclone` folder:
+1. Write [Rclone config](https://rclone.org/install/) into `config/rclone/rclone.conf` file of your Project:
 
 ```ini
 [azure]
