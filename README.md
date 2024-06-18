@@ -116,10 +116,10 @@ Polyfiller is kindly supported by [JetBrains](https://www.jetbrains.com/?from=Po
   - [What's the difference from polyfill.io](#whats-the-difference-from-polyfillio)
   - [Hosting](#hosting)
     - [Docker](#docker)
-      - [Composed services with Object Storage](#composed-services-with-object-storage)
         - [Install Docker in Cloud Server at first](#install-docker-in-cloud-server-at-first)
       - [Simple container](#simple-container)
-        - [1. Manual deployment](#1-manual-deployment)
+      - [Composed services with Object Storage](#composed-services-with-object-storage)
+        - [1. Rclone config](#1-rclone-config)
         - [2. Automatic deployment](#2-automatic-deployment)
 - [Logo](#logo)
 - [License](#license)
@@ -372,7 +372,7 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 > This guide has been tested in the deployment process of China mirror: https://polyfiller.kaiyuanshe.cn
 
-##### Composed services with Object Storage
+
 
 ###### Install Docker in Cloud Server at first
 
@@ -408,8 +408,8 @@ Run shown commands in the Project Root folder:
 docker build -t polyfiller/api-service .
 docker run --name polyfiller -e NODE_ENV=production -p 3000:3000 polyfiller/api-service
 ```
-
-###### 1. Manual deployment
+##### Composed services with Object Storage
+###### 1. Rclone config
 
 1. Write [rclone config](https://rclone.org/install/) into `rclone.conf` file in the Project `config/rclone` folder:
 
