@@ -386,7 +386,7 @@ the current user joins the docker user group
 sudo gpasswd -a ${USER} docker
 ```
 
-You need to execute `CTRL+D` to log out of the session and use ssh to log back into the system.
+You need to execute <kbd>CTRL</kbd> + <kbd>D</kbd> to log out of the session,then use SSH to log back into the system.
 
 [Docker-install-script](https://github.com/docker/docker-install), it say `It is not recommended to depend on this script for deployment to production systems`.
 **So depend on your choice**.
