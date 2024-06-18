@@ -372,11 +372,9 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 > This guide has been tested in the deployment process of China mirror: https://polyfiller.kaiyuanshe.cn
 
-
-
 ###### Install Docker in Cloud Server at first
 
-In the development environment, use install script
+In the development environment, use installation script
 
 ```shell
 curl -fsSL https://get.docker.com | sudo sh
@@ -408,7 +406,9 @@ Run shown commands in the Project Root folder:
 docker build -t polyfiller/api-service .
 docker run --name polyfiller -e NODE_ENV=production -p 3000:3000 polyfiller/api-service
 ```
+
 ##### Composed services with Object Storage
+
 ###### 1. Rclone config
 
 1. Write [rclone config](https://rclone.org/install/) into `rclone.conf` file in the Project `config/rclone` folder:
