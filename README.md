@@ -386,11 +386,11 @@ the current user joins the docker user group
 sudo gpasswd -a ${USER} docker
 ```
 
-You need to execute <kbd>CTRL</kbd> + <kbd>D</kbd> to log out of the session,then use SSH to log back into the system.
+You need to press <kbd>CTRL</kbd> + <kbd>D</kbd> to log out of the session, then use SSH to log back into the system.
 
-[Docker-install-script](https://github.com/docker/docker-install) say `It is not recommended to depend on this script for deployment to production systems`.
+[Docker-install-script](https://github.com/docker/docker-install) says `It is not recommended to depend on this script for deployment to production systems`.
 **So depend on your choice**.
-More info see the [Docker install Doc](https://docs.docker.com/engine/install/).
+Find more information in the [Docker install document](https://docs.docker.com/engine/install/).
 
 Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
 
