@@ -116,7 +116,7 @@ Polyfiller is kindly supported by [JetBrains](https://www.jetbrains.com/?from=Po
   - [What's the difference from polyfill.io](#whats-the-difference-from-polyfillio)
   - [Hosting](#hosting)
     - [Docker](#docker)
-        - [Install Docker in Cloud Server at first](#install-docker-in-cloud-server-at-first)
+      - [Install Docker in Cloud Server at first](#install-docker-in-cloud-server-at-first)
       - [Simple container](#simple-container)
       - [Composed services with Object Storage](#composed-services-with-object-storage)
         - [1. Rclone config](#1-rclone-config)
@@ -372,7 +372,7 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 > This guide has been tested in the deployment process of China mirror: https://polyfiller.kaiyuanshe.cn
 
-###### Install Docker in Cloud Server at first
+##### Install Docker in Cloud Server at first
 
 In the development environment, use installation script
 
