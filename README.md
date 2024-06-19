@@ -394,8 +394,30 @@ Find more information in the [Docker install document](https://docs.docker.com/e
 
 Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
 
+In Debian(Ubuntu)
+
 ```shell
 sudo apt install fuse3 -y
+```
+
+In CentOS
+
+```shell
+sudo yum install epel-release
+sudo yum update
+sudo yum install fuse3
+```
+
+In Fedora
+
+```shell
+sudo dnf install fuse3
+```
+
+In Arch
+
+```shell
+sudo pacman -Syu fuse3
 ```
 
 ##### Simple container
