@@ -116,9 +116,10 @@ Polyfiller is kindly supported by [JetBrains](https://www.jetbrains.com/?from=Po
   - [What's the difference from polyfill.io](#whats-the-difference-from-polyfillio)
   - [Hosting](#hosting)
     - [Docker](#docker)
+      - [Install Docker in Cloud Server at first](#install-docker-in-cloud-server-at-first)
       - [Simple container](#simple-container)
       - [Composed services with Object Storage](#composed-services-with-object-storage)
-        - [1. Manual deployment](#1-manual-deployment)
+        - [1. Rclone config](#1-rclone-config)
         - [2. Automatic deployment](#2-automatic-deployment)
 - [Logo](#logo)
 - [License](#license)
@@ -371,6 +372,54 @@ If you use a load balancer and something like `nginx` in a reverse proxy setup, 
 
 > This guide has been tested in the deployment process of China mirror: https://polyfiller.kaiyuanshe.cn
 
+##### Install Docker in Cloud Server at first
+
+In the development environment, use installation script
+
+```shell
+curl -fsSL https://get.docker.com | sudo sh
+```
+
+add the current user to the `docker` user group
+
+```shell
+sudo gpasswd -a ${USER} docker
+```
+
+You need to press <kbd>CTRL</kbd> + <kbd>D</kbd> to log out of the session, then use SSH to log back into the system.
+
+[Docker-install-script](https://github.com/docker/docker-install) says `It is not recommended to depend on this script for deployment to production systems`.
+**So depend on your choice**.
+Find more information in the [Docker install document](https://docs.docker.com/engine/install/).
+
+Rclone use `FUSE` mount the Rclone's cloud storage systems, you need to install it.
+
+In Debian(Ubuntu)
+
+```shell
+sudo apt install fuse3 -y
+```
+
+In CentOS
+
+```shell
+sudo yum install epel-release
+sudo yum update
+sudo yum install fuse3
+```
+
+In Fedora
+
+```shell
+sudo dnf install fuse3
+```
+
+In Arch
+
+```shell
+sudo pacman -Syu fuse3
+```
+
 ##### Simple container
 
 Run shown commands in the Project Root folder:
@@ -382,28 +431,55 @@ docker run --name polyfiller -e NODE_ENV=production -p 3000:3000 polyfiller/api-
 
 ##### Composed services with Object Storage
 
-Install Docker plugins in Cloud Server at first:
+###### 1. Rclone config
 
-```shell
-sudo apt install docker-compose
-sudo docker plugin install juicedata/juicefs
-```
-
-###### 1. Manual deployment
-
-1. Write [JuiceFS object storage variables](https://juicefs.com/docs/community/reference/how_to_set_up_object_storage/) into `.env` file in the Project Root folder:
+1. Write [Rclone config](https://rclone.org/install/) into `config/rclone/rclone.conf` file of your Project:
 
 ```ini
-STORAGE_TYPE =
-BUCKET =
-ACCESS_KEY =
-SECRET_KEY =
+[azure]
+type = azureblob
+account = xxxx
+key = xxxx
+endpoint = https://xxx
+```
+
+How to configure quickly? Use `rclone config` command? It needs to know a lot of things. Open [Document](https://rclone.org/docs/), choose an instructions, like [Dropbox](https://rclone.org/dropbox/).
+
+Look for
+
+```ini
+[remote]
+app_key =
+app_secret =
+token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+It is the configuration for Dropbox.
+
+```ini
+[dropbox]
+type = dropbox
+app_key = xxxxxxxxx
+app_secret = xxxxxxxxx
+token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+If you use Dropbox, in `docker-compose.yml`：
+
+```yaml
+command: "mount azure:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
+```
+
+It should be changed to：
+
+```yml
+command: "mount dropbox:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
 ```
 
 2. Run shown commands in the Project Root folder:
 
 ```shell
-docker-compose up -d
+docker compose up -d
 ```
 
 ###### 2. Automatic deployment
