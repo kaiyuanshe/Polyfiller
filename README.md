@@ -380,7 +380,7 @@ In the development environment, use installation script
 curl -fsSL https://get.docker.com | sudo sh
 ```
 
-the current user joins the docker user group
+add the current user to the `docker` user group
 
 ```shell
 sudo gpasswd -a ${USER} docker
