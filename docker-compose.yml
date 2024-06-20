@@ -1,12 +1,6 @@
 version: "3"
 
 services:
-  autoheal:
-    image: willfarrell/autoheal:1.2.0
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
-
   polyfill-cache:
     image: rclone/rclone:latest
     environment:
@@ -26,7 +20,6 @@ services:
 
   api-service:
     depends_on:
-      - autoheal
       - polyfill-cache
     image: polyfiller/api-service
     environment:
