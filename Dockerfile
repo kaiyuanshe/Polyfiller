@@ -2,7 +2,7 @@
 
 FROM node:18-slim AS base
 RUN apt-get update && \
-    apt-get install  curl -y --no-install-recommends
+    apt-get install curl -y --no-install-recommends
 COPY . /app
 WORKDIR /app
 
