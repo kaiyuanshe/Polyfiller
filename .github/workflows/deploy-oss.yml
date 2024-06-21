@@ -40,9 +40,6 @@ jobs:
                   EOF
                   mkdir build
                   mv ${{ env.ARTIFACT_PATH }} docker-compose.yml .env start-docker.sh build/
-
-            - name: Configure Rclone and Move to Build
-              run: |
                   echo "${{ secrets.RCLONE_FILE }}" > config/rclone/rclone.conf
                   mv config/ build/ 
 

@@ -489,10 +489,10 @@ docker compose up -d
 |     name      |               value               |
 | :-----------: | :-------------------------------: |
 |  `ENV_FILE`   |      `.env` file shown above      |
+| `RCLONE_FILE` |     rclone configuration file     |
 |    `HOST`     | IP or Domain Name of Cloud Server |
 |    `USER`     |   Account Name of Cloud Server    |
 |   `SSH_KEY`   |  SSH Private Key of Cloud Server  |
-| `RCLONE_FILE` |     rclone configuration file     |
 
 2. Push a Git tag:
 
