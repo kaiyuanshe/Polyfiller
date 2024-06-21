@@ -41,7 +41,7 @@ jobs:
                   mkdir build
                   mv ${{ env.ARTIFACT_PATH }} docker-compose.yml .env start-docker.sh build/
 
-            - name: Rclone Configuration
+            - name: Configure Rclone and Move to Build
               run: |
                   echo "${{ secrets.RCLONE_FILE }}" > config/rclone/rclone.conf
                   mv config/ build/ 
@@ -64,7 +64,7 @@ jobs:
                   command: |
                       cd /tmp/${{ env.BOX_NAME }}
                       mkdir -p ~/${{ env.BOX_NAME }}
-                      mv docker-compose.yml .env start-docker.sh ~/${{ env.BOX_NAME }}
+                      mv docker-compose.yml .env start-docker.sh config/ ~/${{ env.BOX_NAME }}
                       cd ~/${{ env.BOX_NAME }}
                       chmod +x ./start-docker.sh
                       echo ${{ secrets.SSH_KEY }} | sudo -S ./start-docker.sh /tmp/${{ env.BOX_NAME }}/${{ env.ARTIFACT_PATH }}
