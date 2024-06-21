@@ -486,12 +486,13 @@ docker compose up -d
 
 1. Set GitHub Repository secrets:
 
-|    name    |               value               |
-| :--------: | :-------------------------------: |
-| `ENV_FILE` |      `.env` file shown above      |
-|   `HOST`   | IP or Domain Name of Cloud Server |
-|   `USER`   |   Account Name of Cloud Server    |
-| `SSH_KEY`  |  SSH Private Key of Cloud Server  |
+|     name      |               value               |
+| :-----------: | :-------------------------------: |
+|  `ENV_FILE`   |      `.env` file shown above      |
+|    `HOST`     | IP or Domain Name of Cloud Server |
+|    `USER`     |   Account Name of Cloud Server    |
+|   `SSH_KEY`   |  SSH Private Key of Cloud Server  |
+| `RCLONE_FILE` |     rclone configuration file     |
 
 2. Push a Git tag:
 
