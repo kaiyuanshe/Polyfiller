@@ -26,7 +26,10 @@
 		"version": "npm run generate:all && git add .",
 		"release": "np --no-cleanup --no-yarn --no-tests",
 		"update:check": "npx npm-check-updates -x np --dep dev,prod",
-		"update:commit": "npx npm-check-updates -u -x np,find-up --dep dev,prod && npm update && npm install"
+		"update:commit": "npx npm-check-updates -u -x np,find-up --dep dev,prod && npm update && npm install",
+		"pack-image": "docker build -t polyfiller/api-service:latest .",
+		"container": "docker rm -f api-service  &&  docker run --name api-service -p 3000:3000 -d polyfiller/api-service:latest",
+		"install": "get-git-folder https://github.com/kaiyuanshe/service-configuration main Polyfiller  ||  true"
 	},
 	"keywords": [
 		"polyfills",
@@ -66,7 +69,8 @@
 		"standard-changelog": "2.0.27",
 		"ts-node": "10.9.1",
 		"typescript": "4.9.4",
-		"useragent-generator": "^1.1.1-amkt-22079-finish.0"
+		"useragent-generator": "^1.1.1-amkt-22079-finish.0",
+		"get-git-folder": "^0.1.2"
 	},
 	"dependencies": {
 		"@babel/core": "7.20.12",

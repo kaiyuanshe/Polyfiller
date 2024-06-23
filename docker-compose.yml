@@ -1,25 +1,33 @@
 version: "3"
 
-volumes:
-  polyfill-store:
-    driver: juicedata/juicefs
-    driver_opts:
-      name: polyfill-store
-      metaurl: sqlite3://polyfill-store.db
-      storage: ${STORAGE_TYPE}
-      bucket: ${BUCKET}
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
-
 services:
+  polyfill-cache:
+    image: rclone/rclone:latest
+    environment:
+      - RCLONE_CONFIG=/config/rclone/rclone.conf # Path to the rclone config file inside the container
+    cap_add:
+      - SYS_ADMIN # Necessary for FUSE
+      - MKNOD # Necessary for FUSE
+    devices:
+      - "/dev/fuse" # Necessary for FUSE
+    security_opt:
+      - "apparmor:unconfined"
+    volumes:
+      - ./config/rclone:/config/rclone # Mount the local rclone config directory to the container
+      - ./polyfill-cache:/polyfill-cache:shared # Mount the local directory for the rclone mount
+    command: "mount azure:/ /polyfill-cache --allow-other --allow-non-empty --vfs-cache-mode writes"
+    restart: always
+
   api-service:
+    depends_on:
+      - polyfill-cache
     image: polyfiller/api-service
     environment:
       - NODE_ENV=production
     ports:
       - 3001:3000
     volumes:
-      - polyfill-store:/tmp/@wessberg/polyfiller
+      - ./polyfill-cache:/tmp/@wessberg/polyfiller
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/ || exit 1"]
       interval: 3s
