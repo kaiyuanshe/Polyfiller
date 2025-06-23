@@ -52,12 +52,12 @@ jobs:
                   password: ${{ secrets.SSH_KEY }}
 
             - name: Run Image
-              uses: garygrossgarten/github-action-ssh@release
+              uses: appleboy/ssh-action@v1.2.2
               with:
                   host: ${{ secrets.HOST }}
                   username: ${{ secrets.USER }}
                   password: ${{ secrets.SSH_KEY }}
-                  command: |
+                  script: |
                       cd /tmp/${{ env.BOX_NAME }}
                       mkdir -p ~/${{ env.BOX_NAME }}
                       mv docker-compose.yml .env start-docker.sh config/ ~/${{ env.BOX_NAME }}
