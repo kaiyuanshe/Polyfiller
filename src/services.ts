@@ -22,6 +22,7 @@ import type {ApiControllers, IServer} from "./api/server/i-server.js";
 import {Server} from "./api/server/server.js";
 import {PolyfillApiController} from "./api/controller/polyfill-api-controller.js";
 import {StaticApiController} from "./api/controller/static-api-controller.js";
+import {HealthController} from "./api/controller/health-controller.js";
 import {NoopMetricsService} from "./service/metrics/noop-metrics-service.js";
 import type {FileSystem} from "./common/lib/file-system/file-system.js";
 import {realFileSystem} from "./common/lib/file-system/real-file-system.js";
@@ -53,4 +54,9 @@ container.registerSingleton<IPolyfillBl, PolyfillBl>();
 // Controller
 container.registerSingleton<StaticApiController>();
 container.registerSingleton<PolyfillApiController>();
-container.registerSingleton<ApiControllers>(() => [container.get<PolyfillApiController>(), container.get<StaticApiController>()]);
+container.registerSingleton<HealthController>();
+container.registerSingleton<ApiControllers>(() => [
+	container.get<PolyfillApiController>(), 
+	container.get<StaticApiController>(), 
+	container.get<HealthController>()
+]);
