@@ -24,12 +24,12 @@ import {PolyfillApiController} from "./api/controller/polyfill-api-controller.js
 import {StaticApiController} from "./api/controller/static-api-controller.js";
 import {NoopMetricsService} from "./service/metrics/noop-metrics-service.js";
 import type {FileSystem} from "./common/lib/file-system/file-system.js";
-import {realFileSystem} from "./common/lib/file-system/real-file-system.js";
+import {createEnhancedFileSystem} from "./common/lib/file-system/enhanced-file-system.js";
 
 export const container = new DIContainer();
 
-// Utilities
-container.registerSingleton<FileSystem>(() => realFileSystem);
+// Utilities  
+container.registerSingleton<FileSystem>(() => createEnhancedFileSystem(config));
 
 // Services
 container.registerSingleton<ILoggerService, LoggerService>();

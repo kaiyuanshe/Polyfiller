@@ -10,5 +10,13 @@ export const environmentDefaults = {
 	CLEAR_CACHE: "false",
 	HOST: "0.0.0.0",
 	PORT: "3000",
-	VOLUMES: ""
+	VOLUMES: "",
+	// S3 config
+	ENABLE_S3_STORAGE: "false",
+	S3_REGION: undefined as string | undefined,
+	S3_BUCKET: undefined as string | undefined,
+	S3_ACCESS_KEY_ID: undefined as string | undefined,
+	S3_SECRET_ACCESS_KEY: undefined as string | undefined,
+	S3_ENDPOINT: undefined as string | undefined,
+	S3_FORCE_PATH_STYLE: "false"
 };

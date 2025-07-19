@@ -20,6 +20,14 @@ export interface Config {
 	host: string;
 	key: Buffer | undefined;
 	cert: Buffer | undefined;
+	// S3 storage
+	enableS3Storage: boolean;
+	s3Region?: string;
+	s3Bucket?: string;
+	s3AccessKeyId?: string;
+	s3SecretAccessKey?: string;
+	s3Endpoint?: string;
+	s3ForcePathStyle: boolean;
 }
 
 export const config: Config = {
@@ -47,5 +55,13 @@ export const config: Config = {
 			? undefined
 			: environment.CERT.trim().startsWith("-----BEGIN CERTIFICATE-----")
 			? Buffer.from(environment.CERT.replace(/\\n/g, "\n"))
-			: readFileSync(environment.CERT)
+			: readFileSync(environment.CERT),
+	// S3 config
+	enableS3Storage: booleanize(environment.ENABLE_S3_STORAGE),
+	s3Region: environment.S3_REGION,
+	s3Bucket: environment.S3_BUCKET,
+	s3AccessKeyId: environment.S3_ACCESS_KEY_ID,
+	s3SecretAccessKey: environment.S3_SECRET_ACCESS_KEY,
+	s3Endpoint: environment.S3_ENDPOINT,
+	s3ForcePathStyle: booleanize(environment.S3_FORCE_PATH_STYLE)
 };
