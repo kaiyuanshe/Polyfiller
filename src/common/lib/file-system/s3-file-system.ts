@@ -1,6 +1,7 @@
 import {S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, HeadObjectCommand, type S3ClientConfig} from "@aws-sdk/client-s3";
 
 import type {Config} from "../../../config/config";
+import type {ILoggerService} from "../../../service/logger/i-logger-service";
 import {RealFileSystem} from "./real-file-system.js";
 import {S3OrLocal} from "../decorator/simple-s3-switcher.js";
 
@@ -8,7 +9,7 @@ export class S3FileSystem extends RealFileSystem {
 	private s3Client: S3Client;
 	private bucket: string;
 
-	constructor(private readonly config: Config) {
+	constructor(private readonly config: Config, private readonly logger: ILoggerService) {
 		super();
 
 		if (!config.s3Storage?.bucket) {
@@ -44,10 +45,10 @@ export class S3FileSystem extends RealFileSystem {
 	}
 
 	public isS3Path(path: string): boolean {
-		return path.startsWith("s3://") || !!this.config.s3Storage;
+		return path.startsWith("s3://");
 	}
 
-	@S3OrLocal()
+	@S3OrLocal
 	async exists(path: string): Promise<boolean> {
 		try {
 			await this.s3Client.send(
@@ -62,7 +63,7 @@ export class S3FileSystem extends RealFileSystem {
 		}
 	}
 
-	@S3OrLocal()
+	@S3OrLocal
 	async readFile(path: string): Promise<Buffer | undefined> {
 		if (!(await this.exists(path))) return undefined;
 
@@ -82,7 +83,7 @@ export class S3FileSystem extends RealFileSystem {
 		return Buffer.concat(buffers as any);
 	}
 
-	@S3OrLocal()
+	@S3OrLocal
 	async writeFile(path: string, content: string | Buffer): Promise<void> {
 		try {
 			await this.s3Client.send(
@@ -92,12 +93,13 @@ export class S3FileSystem extends RealFileSystem {
 					Body: content instanceof Buffer ? content : Buffer.from(content)
 				})
 			);
-		} catch {
-			// S3 write failed, operation unsuccessful
+		} catch (error) {
+			this.logger.info(`Failed to write file to S3: ${path}`, error);
+			throw error; // Re-throw to maintain existing error handling behavior
 		}
 	}
 
-	@S3OrLocal()
+	@S3OrLocal
 	async delete(path: string): Promise<boolean> {
 		try {
 			await this.s3Client.send(
@@ -107,8 +109,9 @@ export class S3FileSystem extends RealFileSystem {
 				})
 			);
 			return true;
-		} catch {
-			return false;
+		} catch (error) {
+			this.logger.info(`Failed to delete file from S3: ${path}`, error);
+			return false; // Maintain existing behavior of returning false on failure
 		}
 	}
 }
