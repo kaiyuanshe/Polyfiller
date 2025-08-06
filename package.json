@@ -104,6 +104,7 @@
 		"construct-style-sheets-polyfill": "3.0.1",
 		"core-js": "3.27.2",
 		"crosspath": "2.0.0",
+		"dotenv": "^17.2.1",
 		"esbuild": "0.17.4",
 		"events-polyfill": "2.1.2",
 		"express": "4.17.1",
