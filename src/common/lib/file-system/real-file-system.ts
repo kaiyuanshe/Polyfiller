@@ -42,5 +42,5 @@ export class RealFileSystem implements FileSystem {
 	}
 }
 
-// 保持向后兼容的导出
+// for backward compatibility
 export const realFileSystem = new RealFileSystem();
