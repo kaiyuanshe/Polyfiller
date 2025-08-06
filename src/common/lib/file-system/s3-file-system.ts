@@ -1,36 +1,37 @@
-import type {FileSystem} from "./file-system.js";
-import {S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, HeadObjectCommand} from "@aws-sdk/client-s3";
-import type {Config} from "../../../config/config";
-import {promises} from "fs";
-import {dirname} from "crosspath";
+import {S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, HeadObjectCommand, type S3ClientConfig} from "@aws-sdk/client-s3";
 
-export class S3FileSystem implements FileSystem {
+import type {Config} from "../../../config/config";
+import {RealFileSystem} from "./real-file-system.js";
+
+export class S3FileSystem extends RealFileSystem {
 	private s3Client: S3Client;
 	private bucket: string;
 
 	constructor(private readonly config: Config) {
-		if (!config.s3Bucket) {
+		super();
+		
+		if (!config.s3Storage?.bucket) {
 			throw new Error("S3_BUCKET must be configured when using S3 storage");
 		}
 		
-		this.bucket = config.s3Bucket;
+		this.bucket = config.s3Storage.bucket;
 		
-		const s3Config: any = {
-			region: config.s3Region || "us-east-1",
+		const s3Config: S3ClientConfig = {
+			region: config.s3Storage.region || "us-east-1",
 		};
 
 		// If access key is provided, use it
-		if (config.s3AccessKeyId && config.s3SecretAccessKey) {
+		if (config.s3Storage.accessKeyId && config.s3Storage.secretAccessKey) {
 			s3Config.credentials = {
-				accessKeyId: config.s3AccessKeyId,
-				secretAccessKey: config.s3SecretAccessKey,
+				accessKeyId: config.s3Storage.accessKeyId,
+				secretAccessKey: config.s3Storage.secretAccessKey,
 			};
 		}
 
 		// If a custom endpoint is provided (e.g. MinIO, R2, etc.)
-		if (config.s3Endpoint) {
-			s3Config.endpoint = config.s3Endpoint;
-			s3Config.forcePathStyle = config.s3ForcePathStyle;
+		if (config.s3Storage.endpoint) {
+			s3Config.endpoint = config.s3Storage.endpoint;
+			s3Config.forcePathStyle = config.s3Storage.forcePathStyle;
 		}
 
 		this.s3Client = new S3Client(s3Config);
@@ -42,18 +43,12 @@ export class S3FileSystem implements FileSystem {
 	}
 
 	private isS3Path(path: string): boolean {
-		return path.startsWith("s3://") || this.config.enableS3Storage;
+		return path.startsWith("s3://") || !!this.config.s3Storage;
 	}
 
 	async exists(path: string): Promise<boolean> {
 		if (!this.isS3Path(path)) {
-			// Fallback to local file system
-			try {
-				await promises.stat(path);
-				return true;
-			} catch {
-				return false;
-			}
+			return super.exists(path);
 		}
 
 		try {
@@ -69,13 +64,7 @@ export class S3FileSystem implements FileSystem {
 
 	async readFile(path: string): Promise<Buffer | undefined> {
 		if (!this.isS3Path(path)) {
-			// 回退到本地文件系统
-			if (!(await this.exists(path))) return undefined;
-			try {
-				return promises.readFile(path);
-			} catch {
-				return undefined;
-			}
+			return super.readFile(path);
 		}
 
 		if (!(await this.exists(path))) return undefined;
@@ -89,22 +78,10 @@ export class S3FileSystem implements FileSystem {
 			if (!response.Body) return undefined;
 
 			// Convert Readable stream to Buffer
-			const chunks: Uint8Array[] = [];
-			const stream = response.Body as NodeJS.ReadableStream;
+			const chunks = await Array.fromAsync(response.Body as NodeJS.ReadableStream);
+			const buffers = chunks.map(chunk => Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
 			
-			return new Promise<Buffer>((resolve, reject) => {
-				stream.on('data', (chunk: Uint8Array) => {
-					chunks.push(chunk);
-				});
-				
-				stream.on('end', () => {
-					resolve(Buffer.concat(chunks));
-				});
-				
-				stream.on('error', (error) => {
-					reject(error);
-				});
-			});
+			return Buffer.concat(buffers as any);
 		} catch {
 			return undefined;
 		}
@@ -112,15 +89,7 @@ export class S3FileSystem implements FileSystem {
 
 	async writeFile(path: string, content: string | Buffer): Promise<void> {
 		if (!this.isS3Path(path)) {
-			// Fallback to local file system
-			try {
-				await promises.mkdir(dirname(path), {recursive: true});
-				return promises.writeFile(path, content as any);
-			} catch {
-				// The FileSystem might not allow mutations at the given path.
-				// in any case, the operation failed
-			}
-			return;
+			return super.writeFile(path, content);
 		}
 
 		try {
@@ -136,13 +105,7 @@ export class S3FileSystem implements FileSystem {
 
 	async delete(path: string): Promise<boolean> {
 		if (!this.isS3Path(path)) {
-			// Fallback to local file system
-			try {
-				await promises.rm(path, {force: true, recursive: true});
-				return true;
-			} catch {
-				return false;
-			}
+			return super.delete(path);
 		}
 
 		try {

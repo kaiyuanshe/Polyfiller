@@ -2,7 +2,7 @@ import type {FileSystem} from "./file-system.js";
 import {promises} from "fs";
 import {dirname} from "crosspath";
 
-export const realFileSystem: FileSystem = {
+export class RealFileSystem implements FileSystem {
 	async exists(path: string): Promise<boolean> {
 		try {
 			await promises.stat(path);
@@ -10,7 +10,8 @@ export const realFileSystem: FileSystem = {
 		} catch {
 			return false;
 		}
-	},
+	}
+
 	async readFile(path: string): Promise<Buffer | undefined> {
 		if (!(await this.exists(path))) return undefined;
 		try {
@@ -18,7 +19,7 @@ export const realFileSystem: FileSystem = {
 		} catch {
 			return undefined;
 		}
-	},
+	}
 
 	async delete(path: string): Promise<boolean> {
 		try {
@@ -27,15 +28,19 @@ export const realFileSystem: FileSystem = {
 		} catch {
 			return false;
 		}
-	},
+	}
 
 	async writeFile(path: string, content: string | Buffer): Promise<void> {
 		try {
 			await promises.mkdir(dirname(path), {recursive: true});
-			return promises.writeFile(path, content);
+			const data = Buffer.isBuffer(content) ? new Uint8Array(content) : content;
+			return promises.writeFile(path, data);
 		} catch {
 			// The FileSystem might not allow mutations at the given path.
 			// in any case, the operation failed
 		}
 	}
-};
+}
+
+// 保持向后兼容的导出
+export const realFileSystem = new RealFileSystem();
