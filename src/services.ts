@@ -24,16 +24,15 @@ import {PolyfillApiController} from "./api/controller/polyfill-api-controller.js
 import {StaticApiController} from "./api/controller/static-api-controller.js";
 import {NoopMetricsService} from "./service/metrics/noop-metrics-service.js";
 import type {FileSystem} from "./common/lib/file-system/file-system.js";
-import { S3FileSystem } from "./common/lib/file-system/s3-file-system.js";
-import { RealFileSystem } from "./common/lib/file-system/real-file-system.js";
+import { createFileSystem } from "./common/lib/file-system/file-system-factory.js";
 
 export const container = new DIContainer();
 
-// Utilities
-container.registerSingleton<FileSystem>(() => config.s3Storage ? new S3FileSystem(config) : new RealFileSystem());
-
 // Services
 container.registerSingleton<ILoggerService, LoggerService>();
+
+// Utilities
+container.registerSingleton<FileSystem>(() => createFileSystem(config, container.get<ILoggerService>()));
 container.registerSingleton<IMemoryRegistryService, MemoryRegistryService>();
 container.registerSingleton<ICacheRegistryService, CacheRegistryService>();
 container.registerSingleton<IPolyfillBuilderService, PolyfillBuilderService>();
