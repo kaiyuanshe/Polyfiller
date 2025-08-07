@@ -13,8 +13,12 @@ export function error2false<T extends (...args: any[]) => Promise<boolean>>(
 			return await target.call(this, ...args);
 		} catch (error) {
 			// optional: log the error
-			if (this.logger && typeof this.logger.debug === "function") {
-				this.logger.debug(`Method ${methodName} caught error:`, error);
+			try {
+				if (this?.logger?.warn) {
+					this.logger.warn(`Method ${methodName} caught error:`, error);
+				}
+			} catch (logError) {
+				// silently fail if logging causes an error
 			}
 			return false;
 		}
@@ -36,8 +40,12 @@ export function error2falseSync<T extends (...args: any[]) => boolean>(
 			return target.call(this, ...args);
 		} catch (error) {
 			// optional: log the error
-			if (this.logger && typeof this.logger.debug === "function") {
-				this.logger.debug(`Method ${methodName} caught error:`, error);
+			try {
+				if (this?.logger?.warn) {
+					this.logger.warn(`Method ${methodName} caught error:`, error);
+				}
+			} catch (logError) {
+				// silently fail if logging causes an error
 			}
 			return false;
 		}
