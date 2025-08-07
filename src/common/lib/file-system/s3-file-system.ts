@@ -4,7 +4,7 @@ import type {Config} from "../../../config/config";
 import type {ILoggerService} from "../../../service/logger/i-logger-service";
 import {RealFileSystem} from "./real-file-system.js";
 import {fallbackSuper} from "../decorator/simple-s3-switcher.js";
-import {error2false} from "../decorator/error2false.js";
+import {error2false, logger} from "../decorator/error2false.js";
 
 export class S3FileSystem extends RealFileSystem {
 	private s3Client: S3Client;
@@ -86,19 +86,15 @@ export class S3FileSystem extends RealFileSystem {
 	}
 
 	@fallbackSuper
+	@logger
 	async writeFile(path: string, content: string | Buffer): Promise<void> {
-		try {
-			await this.s3Client.send(
-				new PutObjectCommand({
-					Bucket: this.bucket,
-					Key: this.getS3Key(path),
-					Body: content instanceof Buffer ? content : Buffer.from(content)
-				})
-			);
-		} catch (error) {
-			this.logger.info(`Failed to write file to S3: ${path}`, error);
-			throw error; // Re-throw to maintain existing error handling behavior
-		}
+		await this.s3Client.send(
+			new PutObjectCommand({
+				Bucket: this.bucket,
+				Key: this.getS3Key(path),
+				Body: content instanceof Buffer ? content : Buffer.from(content)
+			})
+		);
 	}
 
 	@fallbackSuper
