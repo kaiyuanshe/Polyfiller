@@ -45,16 +45,12 @@ export class S3FileSystem extends RealFileSystem {
 		return path.replace(/^(s3:\/\/|\/?)/, "").replace(/^\/+/, "");
 	}
 
-	public isS3Path(path: string): boolean {
+	public isValidPath(path: string): boolean {
 		return path.startsWith("s3://");
 	}
 
-	public isValidPath(path: string): boolean {
-		return this.isS3Path(path);
-	}
-
-	@fallbackSuper
 	@error2false
+	@fallbackSuper
 	async exists(path: string): Promise<boolean> {
 		await this.s3Client.send(
 			new HeadObjectCommand({
