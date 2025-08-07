@@ -3,7 +3,7 @@ import {S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, HeadO
 import type {Config} from "../../../config/config";
 import type {ILoggerService} from "../../../service/logger/i-logger-service";
 import {RealFileSystem} from "./real-file-system.js";
-import {S3OrLocal} from "../decorator/simple-s3-switcher.js";
+import {fallbackSuper} from "../decorator/simple-s3-switcher.js";
 
 export class S3FileSystem extends RealFileSystem {
 	private s3Client: S3Client;
@@ -48,7 +48,7 @@ export class S3FileSystem extends RealFileSystem {
 		return path.startsWith("s3://");
 	}
 
-	@S3OrLocal
+	@fallbackSuper
 	async exists(path: string): Promise<boolean> {
 		try {
 			await this.s3Client.send(
@@ -63,7 +63,7 @@ export class S3FileSystem extends RealFileSystem {
 		}
 	}
 
-	@S3OrLocal
+	@fallbackSuper
 	async readFile(path: string): Promise<Buffer | undefined> {
 		if (!(await this.exists(path))) return undefined;
 
@@ -83,7 +83,7 @@ export class S3FileSystem extends RealFileSystem {
 		return Buffer.concat(buffers as any);
 	}
 
-	@S3OrLocal
+	@fallbackSuper
 	async writeFile(path: string, content: string | Buffer): Promise<void> {
 		try {
 			await this.s3Client.send(
@@ -99,7 +99,7 @@ export class S3FileSystem extends RealFileSystem {
 		}
 	}
 
-	@S3OrLocal
+	@fallbackSuper
 	async delete(path: string): Promise<boolean> {
 		try {
 			await this.s3Client.send(

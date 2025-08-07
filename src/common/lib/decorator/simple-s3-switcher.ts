@@ -18,7 +18,7 @@ export function fallbackSuper<T extends { isValidPath(path: string): boolean }>(
 			const parentMethod = parent[methodName];
 			
 			if (typeof parentMethod !== 'function') {
-				throw new Error(`Parent method ${methodName} not found or is not a function`);
+				throw new Error(`Parent method "${methodName}" not found or is not a function`);
 			}
 			
 			return parentMethod.call(this, path, ...args);
