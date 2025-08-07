@@ -1,6 +1,12 @@
 /**
- * S3 method switcher decorator
- * If the path is S3 path, use the current method, otherwise call the parent class method
+ * fallbackSuper decorator
+ * If the method is not implemented in the current class, fallback to the parent class method
+ * This is useful for file system implementation, where the method is implemented in the parent class
+ * but the current class is a wrapper around the parent class
+ * 
+ * @param target - The method to decorate
+ * @param context - The context of the method
+ * @returns The decorated method
  */
 export function fallbackSuper<T extends {isValidPath(path: string): boolean}>(target: (this: T, path: string, ...args: any[]) => any, context: ClassMethodDecoratorContext<T, any>) {
 	const methodName = context.name as string;
