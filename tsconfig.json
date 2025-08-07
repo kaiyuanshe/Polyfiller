@@ -9,6 +9,8 @@
 		"skipLibCheck": true,
 		"allowJs": true,
 		"moduleResolution": "node",
+		"experimentalDecorators": false,
+		"emitDecoratorMetadata": false,
 		"useDefineForClassFields": true
 	}
 }

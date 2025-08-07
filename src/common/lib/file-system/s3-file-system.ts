@@ -48,6 +48,10 @@ export class S3FileSystem extends RealFileSystem {
 		return path.startsWith("s3://");
 	}
 
+	public isValidPath(path: string): boolean {
+		return this.isS3Path(path);
+	}
+
 	@fallbackSuper
 	async exists(path: string): Promise<boolean> {
 		try {

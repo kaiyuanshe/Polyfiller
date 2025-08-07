@@ -2,7 +2,7 @@
  * S3 method switcher decorator
  * If the path is S3 path, use the current method, otherwise call the parent class method
  */
-export function fallbackSuper<T extends {isValidPath(path: string): boolean}>(target: (this: T, path: string, ...args: any[]) => any, context: ClassMethodDecoratorContext<T>) {
+export function fallbackSuper<T extends {isValidPath(path: string): boolean}>(target: (this: T, path: string, ...args: any[]) => any, context: ClassMethodDecoratorContext<T, any>) {
 	const methodName = context.name as string;
 
 	return function (this: T, path: string, ...args: any[]) {
