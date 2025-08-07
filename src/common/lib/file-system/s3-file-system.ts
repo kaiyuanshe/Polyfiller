@@ -4,6 +4,7 @@ import type {Config} from "../../../config/config";
 import type {ILoggerService} from "../../../service/logger/i-logger-service";
 import {RealFileSystem} from "./real-file-system.js";
 import {fallbackSuper} from "../decorator/simple-s3-switcher.js";
+import {error2false} from "../decorator/error2false.js";
 
 export class S3FileSystem extends RealFileSystem {
 	private s3Client: S3Client;
@@ -53,18 +54,15 @@ export class S3FileSystem extends RealFileSystem {
 	}
 
 	@fallbackSuper
+	@error2false
 	async exists(path: string): Promise<boolean> {
-		try {
-			await this.s3Client.send(
-				new HeadObjectCommand({
-					Bucket: this.bucket,
-					Key: this.getS3Key(path)
-				})
-			);
-			return true;
-		} catch {
-			return false;
-		}
+		await this.s3Client.send(
+			new HeadObjectCommand({
+				Bucket: this.bucket,
+				Key: this.getS3Key(path)
+			})
+		);
+		return true;
 	}
 
 	@fallbackSuper
@@ -104,18 +102,14 @@ export class S3FileSystem extends RealFileSystem {
 	}
 
 	@fallbackSuper
+	@error2false
 	async delete(path: string): Promise<boolean> {
-		try {
-			await this.s3Client.send(
-				new DeleteObjectCommand({
-					Bucket: this.bucket,
-					Key: this.getS3Key(path)
-				})
-			);
-			return true;
-		} catch (error) {
-			this.logger.info(`Failed to delete file from S3: ${path}`, error);
-			return false; // Maintain existing behavior of returning false on failure
-		}
+		await this.s3Client.send(
+			new DeleteObjectCommand({
+				Bucket: this.bucket,
+				Key: this.getS3Key(path)
+			})
+		);
+		return true;
 	}
 }
