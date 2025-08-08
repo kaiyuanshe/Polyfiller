@@ -63,22 +63,28 @@ export class S3FileSystem extends RealFileSystem {
 
 	@fallbackSuper
 	async readFile(path: string): Promise<Buffer | undefined> {
-		if (!(await this.exists(path))) return undefined;
+		try {
+			const response = await this.s3Client.send(
+				new GetObjectCommand({
+					Bucket: this.bucket,
+					Key: this.getS3Key(path)
+				})
+			);
 
-		const response = await this.s3Client.send(
-			new GetObjectCommand({
-				Bucket: this.bucket,
-				Key: this.getS3Key(path)
-			})
-		);
+			if (!response.Body) return undefined;
 
-		if (!response.Body) return undefined;
+			// Convert Readable stream to Buffer
+			const chunks = await Array.fromAsync(response.Body as NodeJS.ReadableStream);
+			const buffers = chunks.map(chunk => (Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
 
-		// Convert Readable stream to Buffer
-		const chunks = await Array.fromAsync(response.Body as NodeJS.ReadableStream);
-		const buffers = chunks.map(chunk => (Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
-
-		return Buffer.concat(buffers as any);
+			return Buffer.concat(buffers as any);
+		} catch (error: any) {
+			// Handle 404 (NoSuchKey) error - file doesn't exist
+			if (error.name === 'NoSuchKey' || error.$metadata?.httpStatusCode === 404) {
+				return undefined;
+			}
+			throw error; // Re-throw other errors
+		}
 	}
 
 	@fallbackSuper
