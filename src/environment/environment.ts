@@ -1,4 +1,5 @@
 import "dotenv/config";
+
 import {uppercaseKeys} from "../api/util.js";
 
 // load .env file

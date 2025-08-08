@@ -1,47 +1,38 @@
-import type {FileSystem} from "./file-system.js";
 import {promises} from "fs";
 import {dirname} from "crosspath";
 
+import {error2false} from "../decorator/error2false.js";
+import type {FileSystem} from "./file-system.js";
+
 export class RealFileSystem implements FileSystem {
-	async exists(path: string): Promise<boolean> {
-		try {
-			await promises.stat(path);
-			return true;
-		} catch {
-			return false;
-		}
+	@error2false
+	async exists(path: string) {
+		await promises.stat(path);
+		return true;
 	}
 
-	async readFile(path: string): Promise<Buffer | undefined> {
-		if (!(await this.exists(path))) return undefined;
-		try {
-			return promises.readFile(path);
-		} catch {
-			return undefined;
-		}
+	async readFile(path: string) {
+		if (await this.exists(path))
+			try {
+				return await promises.readFile(path);
+			} catch {}
+
+		return undefined;
 	}
 
-	async delete(path: string): Promise<boolean> {
-		try {
-			await promises.rm(path, {force: true, recursive: true});
-			return true;
-		} catch {
-			return false;
-		}
+	@error2false
+	async delete(path: string) {
+		await promises.rm(path, {force: true, recursive: true});
+		return true;
 	}
 
-	async writeFile(path: string, content: string | Buffer): Promise<void> {
-		try {
-			await promises.mkdir(dirname(path), {recursive: true});
-			const data = Buffer.isBuffer(content) ? new Uint8Array(content) : content;
-			return promises.writeFile(path, data);
-		} catch(error) {
-			// The FileSystem might not allow mutations at the given path.
-			// in any case, the operation failed
-			throw new Error(`Failed to write file ${path}: ${error}`)
-		}
+	async writeFile(path: string, content: string | Buffer) {
+		await promises.mkdir(dirname(path), {recursive: true});
+
+		const data = Buffer.isBuffer(content) ? new Uint8Array(content) : content;
+
+		return promises.writeFile(path, data);
 	}
 }
-
 // for backward compatibility
 export const realFileSystem = new RealFileSystem();

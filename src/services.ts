@@ -28,11 +28,11 @@ import { createFileSystem } from "./common/lib/file-system/file-system-factory.j
 
 export const container = new DIContainer();
 
-// Services
-container.registerSingleton<ILoggerService, LoggerService>();
-
 // Utilities
 container.registerSingleton<FileSystem>(() => createFileSystem(config, container.get<ILoggerService>()));
+
+// Services
+container.registerSingleton<ILoggerService, LoggerService>();
 container.registerSingleton<IMemoryRegistryService, MemoryRegistryService>();
 container.registerSingleton<ICacheRegistryService, CacheRegistryService>();
 container.registerSingleton<IPolyfillBuilderService, PolyfillBuilderService>();

@@ -1,10 +1,11 @@
-import {environment} from "../environment/environment.js";
 import {readFileSync} from "fs";
 import {Buffer} from "buffer";
-import {booleanize} from "../api/util.js";
-import type {LogLevel} from "../service/logger/i-logger-service.js";
-import {generateReleaseName, parseLogLevel} from "../api/util/util.js";
+
 import pkg from "../../package.json" assert {type: "json"};
+import {booleanize} from "../api/util.js";
+import {generateReleaseName, parseLogLevel} from "../api/util/util.js";
+import {environment} from "../environment/environment.js";
+import type {LogLevel} from "../service/logger/i-logger-service.js";
 
 export interface Config {
 	volumes: string[];
