@@ -35,9 +35,10 @@ export class RealFileSystem implements FileSystem {
 			await promises.mkdir(dirname(path), {recursive: true});
 			const data = Buffer.isBuffer(content) ? new Uint8Array(content) : content;
 			return promises.writeFile(path, data);
-		} catch {
+		} catch(error) {
 			// The FileSystem might not allow mutations at the given path.
 			// in any case, the operation failed
+			throw new Error(`Failed to write file ${path}: ${error}`)
 		}
 	}
 }
